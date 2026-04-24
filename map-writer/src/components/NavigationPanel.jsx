@@ -49,16 +49,16 @@ export default function NavigationPanel({
 
 const s = {
   panel: {
-    position: 'absolute', bottom: 32, left: '50%',
-    transform: 'translateX(-50%)',
-    zIndex: 1000, width: 300,
-    background: 'rgba(10,10,15,0.93)',
-    backdropFilter: 'blur(16px)',
+    position: 'absolute', bottom: 0, left: 0, right: 0,
+    zIndex: 1000,
+    background: 'rgba(10,10,15,0.97)',
+    backdropFilter: 'blur(20px)',
     border: '1px solid rgba(255,255,255,0.08)',
-    borderRadius: 16,
-    boxShadow: '0 8px 32px rgba(0,0,0,0.6)',
+    borderRadius: '20px 20px 0 0',
+    boxShadow: '0 -4px 24px rgba(0,0,0,0.5)',
     overflow: 'hidden',
     fontFamily: "'Space Mono', monospace",
+    paddingBottom: 'env(safe-area-inset-bottom, 0px)',
   },
   progressTrack: {
     height: 3, background: 'rgba(255,255,255,0.08)',
@@ -68,21 +68,22 @@ const s = {
     transition: 'width .4s ease',
   },
   body: {
-    display: 'flex', alignItems: 'center', gap: 12, padding: '12px 16px',
+    display: 'flex', alignItems: 'center', gap: 16, padding: '16px 20px 20px',
   },
   info: { flex: 1 },
   distLabel: {
-    fontSize: 26, fontWeight: 700, color: '#f5f0e8', letterSpacing: '-1px',
+    fontSize: 32, fontWeight: 700, color: '#f5f0e8', letterSpacing: '-1px',
     lineHeight: 1,
   },
   waypointLabel: {
-    fontSize: 10, color: 'rgba(245,240,232,0.4)',
-    marginTop: 4, letterSpacing: 0.5,
+    fontSize: 11, color: 'rgba(245,240,232,0.4)',
+    marginTop: 6, letterSpacing: 0.5,
   },
   doneBtn: {
-    padding: '8px 14px', borderRadius: 10, border: '1px solid rgba(255,255,255,0.15)',
-    background: 'transparent', color: 'rgba(245,240,232,0.6)',
-    fontSize: 12, cursor: 'pointer', fontFamily: "'Space Mono', monospace",
-    whiteSpace: 'nowrap',
+    padding: '12px 20px', borderRadius: 12,
+    border: '1px solid rgba(255,255,255,0.2)',
+    background: 'transparent', color: 'rgba(245,240,232,0.7)',
+    fontSize: 13, cursor: 'pointer', fontFamily: "'Space Mono', monospace",
+    whiteSpace: 'nowrap', fontWeight: 700,
   },
 }

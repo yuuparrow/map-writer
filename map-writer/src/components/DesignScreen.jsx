@@ -98,8 +98,8 @@ export default function DesignScreen({ position, onCreateRoute, loading, routeEr
 
 const s = {
   panel: {
-    position: 'absolute', top: 16, left: 16, zIndex: 1000,
-    width: 280,
+    position: 'absolute', top: 16, left: 16, right: 16, zIndex: 1000,
+    maxWidth: 360,
     background: 'rgba(10,10,15,0.93)',
     backdropFilter: 'blur(16px)',
     border: '1px solid rgba(255,255,255,0.08)',
