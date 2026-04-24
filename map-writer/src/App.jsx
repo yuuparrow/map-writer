@@ -7,6 +7,7 @@ import { useGeolocation } from './hooks/useGeolocation'
 import { textToGpsRoute, subsampleWaypoints } from './utils/textToRoute'
 import { haversineDist, bearingDeg } from './utils/geo'
 import { fetchFootRoute } from './utils/routing'
+import { findBestRoute } from './utils/autoRoute'
 
 const ADVANCE_THRESHOLD = 15
 
@@ -64,24 +65,22 @@ export default function App() {
     // eslint-disable-next-line
   }, [])
 
-  const handleCreateRoute = useCallback(async (text, scale) => {
+  const handleCreateRoute = useCallback(async (text) => {
     if (!position) return
     setRouteLoading(true)
     setRouteError(null)
 
-    const allWaypoints = textToGpsRoute(text, position, scale)
-    if (allWaypoints.length === 0) { setRouteLoading(false); return }
-
-    const keyCount = Math.min(25, Math.max(10, text.length * 7))
-    const keyWaypoints = subsampleWaypoints(allWaypoints, keyCount)
-
     let route
     try {
-      route = await fetchFootRoute(keyWaypoints)
+      const best = await findBestRoute(text, position)
+      route = best.route
     } catch {
+      // Full fallback: direct canvas waypoints at 500m
       setRouteError('道路ルート取得失敗。直線ルートで代替します。')
-      route = allWaypoints
+      route = textToGpsRoute(text, position, 500)
     }
+
+    if (!route || route.length === 0) { setRouteLoading(false); return }
 
     setPlannedRoute(route)
     navRef.current.route = route
@@ -143,7 +142,7 @@ export default function App() {
       {appMode === 'design' && (
         <DesignScreen
           position={position}
-          onCreateRoute={handleCreateRoute}
+          onCreateRoute={(text) => handleCreateRoute(text)}
           loading={routeLoading}
           routeError={routeError}
         />

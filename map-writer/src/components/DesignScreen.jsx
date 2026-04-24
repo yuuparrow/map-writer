@@ -1,25 +1,15 @@
 import React, { useState, useRef, useEffect } from 'react'
 
-const SCALES = [
-  { label: '100m', value: 100, desc: '徒歩 小規模' },
-  { label: '300m', value: 300, desc: '徒歩 数ブロック' },
-  { label: '500m', value: 500, desc: 'ジョギング向け' },
-  { label: '1km', value: 1000, desc: 'サイクリング向け' },
-]
-
 export default function DesignScreen({ position, onCreateRoute, loading, routeError }) {
   const [text, setText] = useState('')
-  const [scale, setScale] = useState(300)
   const canvasRef = useRef(null)
 
-  // Re-render canvas preview whenever text changes
   useEffect(() => {
     const canvas = canvasRef.current
     if (!canvas) return
     const ctx = canvas.getContext('2d')
     ctx.clearRect(0, 0, canvas.width, canvas.height)
     if (!text) return
-
     const fontSize = 60
     ctx.font = `bold ${fontSize}px Arial, sans-serif`
     ctx.textBaseline = 'top'
@@ -46,7 +36,6 @@ export default function DesignScreen({ position, onCreateRoute, loading, routeEr
         <div style={s.hint}>最大8文字 · アルファベット推奨</div>
       </div>
 
-      {/* Canvas preview */}
       {text.length > 0 && (
         <div style={s.previewBox}>
           <canvas
@@ -58,22 +47,6 @@ export default function DesignScreen({ position, onCreateRoute, loading, routeEr
         </div>
       )}
 
-      <div style={s.section}>
-        <label style={s.label}>スケール（文字の高さ）</label>
-        <div style={s.scaleRow}>
-          {SCALES.map(opt => (
-            <button
-              key={opt.value}
-              style={{ ...s.scaleBtn, ...(scale === opt.value ? s.scaleBtnActive : {}) }}
-              onClick={() => setScale(opt.value)}
-            >
-              <span style={s.scaleBtnLabel}>{opt.label}</span>
-              <span style={s.scaleBtnDesc}>{opt.desc}</span>
-            </button>
-          ))}
-        </div>
-      </div>
-
       <div style={s.gpsStatus}>
         {position
           ? <><span style={s.gpsDot} /> GPS取得済み</>
@@ -81,12 +54,19 @@ export default function DesignScreen({ position, onCreateRoute, loading, routeEr
         }
       </div>
 
+      {loading && (
+        <div style={s.loadingMsg}>
+          <span style={s.loadingDot} />
+          最適なスケールを探しています...
+        </div>
+      )}
+
       <button
         style={{ ...s.createBtn, ...(canCreate ? {} : s.createBtnDisabled) }}
         disabled={!canCreate}
-        onClick={() => onCreateRoute(text.trim(), scale)}
+        onClick={() => onCreateRoute(text.trim())}
       >
-        {loading ? '🔄 道路ルート計算中...' : '🗺️ ルートを作成'}
+        {loading ? '計算中...' : '🗺️ ルートを作成'}
       </button>
 
       {routeError && (
@@ -122,20 +102,6 @@ const s = {
     border: '1px solid rgba(255,255,255,0.06)',
     overflow: 'hidden', padding: '4px 0',
   },
-  scaleRow: { display: 'flex', gap: 6 },
-  scaleBtn: {
-    flex: 1, padding: '6px 2px', borderRadius: 8,
-    border: '1px solid rgba(255,255,255,0.1)',
-    background: 'transparent', color: 'rgba(245,240,232,0.45)',
-    cursor: 'pointer', display: 'flex', flexDirection: 'column',
-    alignItems: 'center', gap: 2, fontFamily: "'Space Mono', monospace",
-    transition: 'all .15s',
-  },
-  scaleBtnActive: {
-    background: 'rgba(255,61,0,0.2)', borderColor: '#ff3d00', color: '#ff3d00',
-  },
-  scaleBtnLabel: { fontSize: 12, fontWeight: 700 },
-  scaleBtnDesc: { fontSize: 8, opacity: 0.7 },
   gpsStatus: {
     display: 'flex', alignItems: 'center', gap: 6,
     fontSize: 11, color: 'rgba(245,240,232,0.5)',
@@ -144,6 +110,17 @@ const s = {
     display: 'inline-block', width: 8, height: 8,
     borderRadius: '50%', background: '#00e676',
     boxShadow: '0 0 6px #00e676',
+  },
+  loadingMsg: {
+    display: 'flex', alignItems: 'center', gap: 8,
+    fontSize: 11, color: 'rgba(245,240,232,0.5)',
+    padding: '6px 10px', background: 'rgba(0,102,255,0.08)',
+    borderRadius: 8, border: '1px solid rgba(0,102,255,0.15)',
+  },
+  loadingDot: {
+    display: 'inline-block', width: 8, height: 8, borderRadius: '50%',
+    background: '#0066ff', boxShadow: '0 0 6px #0066ff',
+    animation: 'pulse 1s infinite', flexShrink: 0,
   },
   createBtn: {
     padding: '12px', borderRadius: 10, border: 'none',
