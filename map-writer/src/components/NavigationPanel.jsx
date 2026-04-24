@@ -36,9 +36,7 @@ export default function NavigationPanel({
 
         <div style={s.info}>
           <div style={s.distLabel}>{distText}</div>
-          <div style={s.waypointLabel}>
-            {waypointIdx} / {totalWaypoints} ポイント
-          </div>
+          <div style={s.waypointLabel}>{Math.round(progress)}% 完了</div>
         </div>
 
         <button style={s.doneBtn} onClick={onComplete}>

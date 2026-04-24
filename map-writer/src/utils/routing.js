@@ -12,6 +12,16 @@ function lerpPoint(a, b, t) {
   return { lat: a.lat + (b.lat - a.lat) * t, lng: a.lng + (b.lng - a.lng) * t }
 }
 
+export async function fetchFootRoute(waypoints) {
+  const coordStr = waypoints.map(w => `${w.lng},${w.lat}`).join(';')
+  const url = `https://routing.openstreetmap.de/routed-foot/route/v1/foot/${coordStr}?overview=full&geometries=geojson`
+  const res = await fetch(url)
+  if (!res.ok) throw new Error(`OSRM ${res.status}`)
+  const data = await res.json()
+  if (data.code !== 'Ok' || !data.routes?.length) throw new Error('No route found')
+  return data.routes[0].geometry.coordinates.map(([lng, lat]) => ({ lat, lng }))
+}
+
 export async function fetchOsrmRoute(waypoints) {
   const coordStr = waypoints.map(w => `${w.lng},${w.lat}`).join(';')
   const url = `https://router.project-osrm.org/route/v1/driving/${coordStr}?overview=full&geometries=geojson`

@@ -58,3 +58,13 @@ export function textToGpsRoute(text, center, heightMeters = 300) {
     lng: center.lng + (x - width / 2) * metersPerPixel * lngPerMeter,
   }))
 }
+
+/**
+ * Evenly subsamples waypoints to `count` points.
+ * Used to keep OSRM API calls within waypoint limits.
+ */
+export function subsampleWaypoints(waypoints, count) {
+  if (waypoints.length <= count) return waypoints
+  const step = (waypoints.length - 1) / (count - 1)
+  return Array.from({ length: count }, (_, i) => waypoints[Math.round(i * step)])
+}

@@ -7,7 +7,7 @@ const SCALES = [
   { label: '1km', value: 1000, desc: 'サイクリング向け' },
 ]
 
-export default function DesignScreen({ position, onCreateRoute }) {
+export default function DesignScreen({ position, onCreateRoute, loading, routeError }) {
   const [text, setText] = useState('')
   const [scale, setScale] = useState(300)
   const canvasRef = useRef(null)
@@ -27,7 +27,7 @@ export default function DesignScreen({ position, onCreateRoute }) {
     ctx.fillText(text, 10, 8)
   }, [text])
 
-  const canCreate = text.trim().length > 0 && position != null
+  const canCreate = text.trim().length > 0 && position != null && !loading
 
   return (
     <div style={s.panel}>
@@ -86,8 +86,12 @@ export default function DesignScreen({ position, onCreateRoute }) {
         disabled={!canCreate}
         onClick={() => onCreateRoute(text.trim(), scale)}
       >
-        🗺️ ルートを作成
+        {loading ? '🔄 道路ルート計算中...' : '🗺️ ルートを作成'}
       </button>
+
+      {routeError && (
+        <div style={s.errorMsg}>⚠ {routeError}</div>
+      )}
     </div>
   )
 }
@@ -151,4 +155,5 @@ const s = {
     opacity: 0.35, cursor: 'not-allowed',
     background: 'rgba(255,255,255,0.08)',
   },
+  errorMsg: { fontSize: 10, color: '#ff3d00', padding: '2px 0' },
 }
