@@ -4,11 +4,18 @@ import DesignScreen from './components/DesignScreen'
 import NavigationPanel from './components/NavigationPanel'
 import StatusBar from './components/StatusBar'
 import { useGeolocation } from './hooks/useGeolocation'
-import { textToGpsRoute } from './utils/textToRoute'
+import { textToGpsRoute, subsampleWaypoints } from './utils/textToRoute'
 import { haversineDist, bearingDeg } from './utils/geo'
+import { fetchFootRoute } from './utils/routing'
 
-// Advance to next waypoint when within this many meters
 const ADVANCE_THRESHOLD = 15
+
+function estimateDistanceKm(route) {
+  if (!route || route.length < 2) return 0
+  let total = 0
+  for (let i = 0; i < route.length - 1; i++) total += haversineDist(route[i], route[i + 1])
+  return total / 1000
+}
 
 export default function App() {
   // 'design' → 'preview' → 'navigating' → 'complete'
@@ -16,6 +23,8 @@ export default function App() {
   const [plannedRoute, setPlannedRoute] = useState([])
   const [gpsTrace, setGpsTrace] = useState([])
   const [waypointIdx, setWaypointIdx] = useState(0)
+  const [routeLoading, setRouteLoading] = useState(false)
+  const [routeError, setRouteError] = useState(null)
 
   // Refs to avoid stale closures in GPS callback
   const navRef = useRef({ mode: 'design', route: [], idx: 0 })
@@ -55,15 +64,31 @@ export default function App() {
     // eslint-disable-next-line
   }, [])
 
-  const handleCreateRoute = useCallback((text, scale) => {
+  const handleCreateRoute = useCallback(async (text, scale) => {
     if (!position) return
-    const route = textToGpsRoute(text, position, scale)
-    if (route.length === 0) return
+    setRouteLoading(true)
+    setRouteError(null)
+
+    const allWaypoints = textToGpsRoute(text, position, scale)
+    if (allWaypoints.length === 0) { setRouteLoading(false); return }
+
+    const keyCount = Math.min(25, Math.max(10, text.length * 7))
+    const keyWaypoints = subsampleWaypoints(allWaypoints, keyCount)
+
+    let route
+    try {
+      route = await fetchFootRoute(keyWaypoints)
+    } catch {
+      setRouteError('道路ルート取得失敗。直線ルートで代替します。')
+      route = allWaypoints
+    }
+
     setPlannedRoute(route)
     navRef.current.route = route
     setWaypointIdx(0)
     navRef.current.idx = 0
     setGpsTrace([])
+    setRouteLoading(false)
     setAppMode('preview')
     navRef.current.mode = 'preview'
   }, [position])
@@ -119,13 +144,17 @@ export default function App() {
         <DesignScreen
           position={position}
           onCreateRoute={handleCreateRoute}
+          loading={routeLoading}
+          routeError={routeError}
         />
       )}
 
       {appMode === 'preview' && (
         <div style={styles.previewPanel}>
           <div style={styles.previewTitle}>ルートプレビュー</div>
-          <div style={styles.previewSub}>{plannedRoute.length} ポイント</div>
+          <div style={styles.previewSub}>
+            約 {estimateDistanceKm(plannedRoute).toFixed(1)} km のウォーキング
+          </div>
           <button style={styles.navBtn} onClick={handleStartNav}>
             ▶ ナビ開始
           </button>
