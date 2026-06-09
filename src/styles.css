@@ -1,0 +1,265 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', 'Noto Sans JP', sans-serif;
+  background: #10141c;
+  color: #e8ecf4;
+  overscroll-behavior: none;
+}
+
+.app {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+}
+
+.map {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: #1a1f2a;
+}
+
+/* ボトムシート */
+.sheet {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1000;
+  background: rgba(16, 20, 28, 0.94);
+  backdrop-filter: blur(8px);
+  border-radius: 18px 18px 0 0;
+  padding: 18px 18px calc(18px + env(safe-area-inset-bottom));
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.5);
+}
+
+.title {
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.subtitle {
+  font-size: 14px;
+  color: #9aa4b5;
+}
+
+.text-input {
+  font-size: 20px;
+  padding: 14px;
+  border-radius: 12px;
+  border: 1px solid #2c3548;
+  background: #1a212e;
+  color: #e8ecf4;
+  width: 100%;
+}
+
+.text-input:focus {
+  outline: 2px solid #4da3ff;
+}
+
+.slider-row {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 14px;
+  color: #9aa4b5;
+}
+
+.slider-row strong {
+  color: #e8ecf4;
+}
+
+.slider-row input[type='range'] {
+  width: 100%;
+  accent-color: #4da3ff;
+  height: 32px;
+}
+
+.gps-status {
+  font-size: 13px;
+  color: #9aa4b5;
+}
+
+.btn {
+  font-size: 17px;
+  font-weight: 600;
+  padding: 16px;
+  border-radius: 12px;
+  border: 1px solid #2c3548;
+  background: #1a212e;
+  color: #e8ecf4;
+  width: 100%;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.btn.primary {
+  background: #2f7df6;
+  border-color: #2f7df6;
+  color: #fff;
+}
+
+.btn:disabled {
+  opacity: 0.45;
+}
+
+.btn-row {
+  display: flex;
+  gap: 10px;
+}
+
+.stats {
+  display: flex;
+  justify-content: space-around;
+  background: #1a212e;
+  border-radius: 12px;
+  padding: 12px;
+}
+
+.stats > div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.stat-label {
+  font-size: 12px;
+  color: #9aa4b5;
+}
+
+.stat-value {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+/* ナビ */
+.nav-sheet {
+  gap: 10px;
+}
+
+.banner {
+  background: #b3261e;
+  color: #fff;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.nav-main {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.arrow-wrap {
+  width: 84px;
+  height: 84px;
+  flex-shrink: 0;
+  background: #1a212e;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.arrow {
+  width: 64px;
+  height: 64px;
+  transition: transform 0.3s ease;
+}
+
+.arrow-note {
+  position: absolute;
+  bottom: -16px;
+  font-size: 10px;
+  color: #9aa4b5;
+}
+
+.nav-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.nav-distance {
+  font-size: 40px;
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+.nav-sub {
+  font-size: 13px;
+  color: #9aa4b5;
+}
+
+.nav-sub.center {
+  text-align: center;
+}
+
+.progress-bar {
+  height: 8px;
+  background: #1a212e;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: #4da3ff;
+  transition: width 0.4s ease;
+}
+
+/* シミュレータバー(開発用) */
+.sim-bar {
+  position: absolute;
+  top: calc(8px + env(safe-area-inset-top));
+  left: 8px;
+  z-index: 1100;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(16, 20, 28, 0.9);
+  border-radius: 10px;
+  padding: 6px 10px;
+  font-size: 12px;
+}
+
+.sim-bar button,
+.sim-bar select {
+  font-size: 14px;
+  padding: 4px 10px;
+  border-radius: 8px;
+  border: 1px solid #2c3548;
+  background: #1a212e;
+  color: #e8ecf4;
+}
+
+.sim-bar button.active {
+  background: #b3261e;
+}
+
+/* Leaflet微調整 */
+.leaflet-control-attribution {
+  background: rgba(16, 20, 28, 0.7) !important;
+  color: #9aa4b5 !important;
+  font-size: 10px !important;
+}
+
+.leaflet-control-attribution a {
+  color: #4da3ff !important;
+}

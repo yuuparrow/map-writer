@@ -1,0 +1,10 @@
+{
+  "name": "MapWriter",
+  "short_name": "MapWriter",
+  "description": "歩いて地図に文字を描くGPSアートナビ",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#10141c",
+  "theme_color": "#10141c",
+  "icons": [{ "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml" }]
+}
